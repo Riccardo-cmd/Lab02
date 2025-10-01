@@ -1,12 +1,44 @@
 def carica_da_file(file_path):
     """Carica i libri dal file"""
     # TODO
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            righe = f.read().strip().splitlines()
 
+    except FileNotFoundError:
+        return None
+
+    if not righe:
+        return None
+
+    try:
+        n_sezioni = int(righe[0].strip())
+    except ValueError:
+        return None
+
+    biblioteca = [{} for _ in range(n_sezioni)]  # lista di dizionari
+
+    for riga in righe[1]:
+        try:
+            titolo, autore, anno, pagine, sezione = riga.strip().split(',')
+            anno = int(anno)
+            pagine = int(pagine)
+            sezione = int(sezione)
+            if sezione < 1 or sezione > n_sezioni:
+                continue  # ignoro libri in sezioni inesistenti
+
+            libro = {"titolo": titolo, "autore": autore, "anno": anno, "pagine": pagine, "sezione": sezione}
+            biblioteca[sezione - 1].append(libro)
+
+        except ValueError:
+            continue  # ignoro righe malformate
+    return biblioteca
 
 def aggiungi_libro(biblioteca, titolo, autore, anno, pagine, sezione, file_path):
     """Aggiunge un libro nella biblioteca"""
     # TODO
-
+    libro = {'titolo': titolo, 'autore': autore, 'anno': anno, 'pagine': pagine, 'sezione': sezione}
+    return libro
 
 def cerca_libro(biblioteca, titolo):
     """Cerca un libro nella biblioteca dato il titolo"""
