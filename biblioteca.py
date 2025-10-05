@@ -88,7 +88,6 @@ def main():
             while True:
                 file_path = input("Inserisci il path del file da caricare: ").strip()
                 biblioteca = carica_da_file(file_path)
-                print(biblioteca)
                 if biblioteca is not None:
                     break
 
