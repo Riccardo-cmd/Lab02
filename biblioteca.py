@@ -16,9 +16,9 @@ def carica_da_file(file_path):
     except ValueError:
         return None
 
-    biblioteca = [{} for _ in range(n_sezioni)]  # lista di dizionari
+    biblioteca = [[] for i in range(n_sezioni)]  # lista di liste
 
-    for riga in righe[1]:
+    for riga in righe[1:]:
         try:
             titolo, autore, anno, pagine, sezione = riga.strip().split(',')
             anno = int(anno)
@@ -37,18 +37,38 @@ def carica_da_file(file_path):
 def aggiungi_libro(biblioteca, titolo, autore, anno, pagine, sezione, file_path):
     """Aggiunge un libro nella biblioteca"""
     # TODO
-    libro = {'titolo': titolo, 'autore': autore, 'anno': anno, 'pagine': pagine, 'sezione': sezione}
-    return libro
+    if sezione < 1 or sezione > len(biblioteca):
+        return None
+
+    nuovo_libro = {"titolo": titolo, "autore": autore, "anno": anno, "pagine": pagine, "sezione": sezione}
+    biblioteca[sezione - 1].append(nuovo_libro)
+
+    try:
+        with open(file_path, "a") as f:
+            f.write(f"{titolo},{autore},{anno},{pagine},{sezione}\n")
+    except FileNotFoundError:
+        return None
+
+    return nuovo_libro
 
 def cerca_libro(biblioteca, titolo):
     """Cerca un libro nella biblioteca dato il titolo"""
     # TODO
+    for sez in biblioteca:
+        for libro in sez:
+            if libro["titolo"].lower() == titolo.lower():
+                return f"{libro['titolo']}, {libro['autore']}, {libro['anno']}, {libro['pagine']}, {libro['sezione']}"
+    return None
 
 
 def elenco_libri_sezione_per_titolo(biblioteca, sezione):
     """Ordina i titoli di una data sezione della biblioteca in ordine alfabetico"""
     # TODO
+    if sezione < 1 or sezione > len(biblioteca):
+        return None
 
+    libri = biblioteca[sezione - 1]
+    return sorted([libro["titolo"] for libro in libri])
 
 def main():
     biblioteca = []
@@ -68,6 +88,7 @@ def main():
             while True:
                 file_path = input("Inserisci il path del file da caricare: ").strip()
                 biblioteca = carica_da_file(file_path)
+                print(biblioteca)
                 if biblioteca is not None:
                     break
 
@@ -119,7 +140,7 @@ def main():
             if titoli is not None:
                 print(f'\nSezione {sezione} ordinata:')
                 print("\n".join([f"- {titolo}" for titolo in titoli]))
-
+            else: print('La sezione non esiste')
         elif scelta == "5":
             print("Uscita dal programma...")
             break
@@ -129,4 +150,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
